@@ -5,8 +5,7 @@ OFF = 0
 ON = 1
 
 class Coils:
-    """Represents the coils or list of coils to operate on attached to an
-    instrument"""
+    """Coil or coils to operate on attached to an instrument"""
 
     coil_states = [OFF,OFF,OFF,OFF] # Remembers state of all coils
 
@@ -15,24 +14,20 @@ class Coils:
         self.coils: list = sorted(coils) # Coil or coils to opperate on
 
     def coils_on(self) -> None:
-        """Turn on the specific coil or list of coils"""
-        self.set_coil_states(ON)
+        """Turn on the specific coil or coils"""
         self.write_coil_states(ON)
 
     def coils_off(self) -> None:
-        """Turn off the specific coil or list of coils"""
-        self.set_coil_states(OFF)
+        """Turn off the specific coil or coils"""
         self.write_coil_states(OFF)        
 
-    def set_coil_states(self, state: int) -> None:
-        """Set the state for the specific coil or list of coils"""
+    def write_coil_states(self, state: int) -> None:
+        """Perform the Modbus function for the coil or coils"""
         for i in self.coils:
             self.coil_states[i] = state
             logging.debug(f"{i}, {self.coil_states[i]}")
 
-    def write_coil_states(self, state: int) -> None:
-        """Perform the Modbus function for the coil or list of coils"""
-        if len(self.coils) == state:
+        if len(self.coils) == 1:
             # Modbus Function Code 05: Single Coil (FC=05)
             self.instrument.write_bit(self.coils[0], self.coil_states[self.coils[0]])
             logging.info(f"FC05 {self.instrument.address} {self.coils} {self.coil_states}")            
