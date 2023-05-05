@@ -2,7 +2,6 @@ from queue import Queue
 from gateway.commands import Command
 
 class Invoker:
-
     def __init__(self):
         self.cmd_queue = Queue()
 
