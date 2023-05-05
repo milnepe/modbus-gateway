@@ -4,6 +4,9 @@ from gateway.coil import Coils
 from gateway.randomcoil import *
 from gateway.commands import *
 import time
+import logging
+
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.DEBUG)
 
 def main() -> None:
     # port name, server address (in decimal)                                        
@@ -17,25 +20,25 @@ def main() -> None:
     run = True
     while run:
         coil_list = [0, 1, 2, 3]
-        print(f"Turning off all coils {coil_list}")
+        print(f"\nTurning off all coils {coil_list}")
         invoker.set_command(coils_off_cmd(Coils(instrument1, coil_list)))
         invoker.invoke()
         time.sleep(2)
 
         coil_list = gen_coillist(max_coils=4)
-        print(f"Turning on random coil(s) {coil_list}")
+        print(f"\nTurning on random coil(s) {coil_list}")
         invoker.set_command(coils_on_cmd(Coils(instrument1, coil_list)))    
         invoker.invoke()
         time.sleep(2)
 
         coil_list = [0, 1, 2, 3]
-        print(f"Turning on all coils {coil_list}")
+        print(f"\nTurning on all coils {coil_list}")
         invoker.set_command(coils_on_cmd(Coils(instrument1, coil_list)))
         invoker.invoke()
         time.sleep(2)
 
         coil_list = gen_coillist(max_coils=4)
-        print(f"Turning off random coil(s) {coil_list}")
+        print(f"\nTurning off random coil(s) {coil_list}")
         invoker.set_command(coils_off_cmd(Coils(instrument1, coil_list)))    
         invoker.invoke()
         time.sleep(2)
