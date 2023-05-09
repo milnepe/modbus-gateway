@@ -20,13 +20,6 @@ class coils_off_cmd(Command):
     def execute(self) -> None:
         self.plc.coils_off(self.coil_list)
 
-class get_states_cmd(Command):
-    def __init__(self, plc: Plcs):
-        self.plc = plc
-
-    def execute(self) -> None:
-        self.plc.get_states()
-
 class validate_cmd(Command):
     def __init__(self, plc: Plcs):
         self.plc = plc

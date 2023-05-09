@@ -18,10 +18,6 @@ class Plcs:
         """Turn off the coils in the list"""
         self._write_coil_states(coils, OFF)
 
-    def get_states(self) -> list:
-        """Get state of all coils"""
-        return self._read_coil_states()
-
     def _write_coil_states(self, coils: list, state: int) -> None:
         """Write using the MODBUS function for the coil or coils"""
         for i in coils:

@@ -32,10 +32,6 @@ def main() -> None:
         invoker.set_command(validate_cmd(plc1))
         invoker.invoke()        
 
-        print(f"\nGet coil status")        
-        invoker.set_command(get_states_cmd(plc1))
-        invoker.invoke()        
-
         coil_list = gen_coillist(max_coils=4)
         print(f"\nTurning off random coil(s) {coil_list}")
         invoker.set_command(coils_off_cmd(plc1, coil_list))    
