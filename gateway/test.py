@@ -1,10 +1,12 @@
 import minimalmodbus
-from gateway.invoker import Invoker
-from gateway.plcs import Plcs
-from gateway.commands import *
-from gateway.randomcoil import *
+from invoker import Invoker
+from plcs import Plcs
+from commands import Coils_on_cmd, Coils_off_cmd, Validate_cmd 
+from randomcoil import gen_coillist
 import time
 import logging
+
+delay = 0.1
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -24,22 +26,23 @@ def main() -> None:
     while run:
         coil_list = gen_coillist(max_coils=4)
         print(f"\nTurning on random coil(s) {coil_list}")
-        invoker.set_command(coils_on_cmd(plc1, coil_list))    
+        invoker.set_command(Coils_on_cmd(plc1, coil_list))    
         invoker.invoke()
 
         print(f"\nTest coil status")        
-        invoker.set_command(validate_cmd(plc1))
+        invoker.set_command(Validate_cmd(plc1))
         invoker.invoke()
-        time.sleep(2)
+        time.sleep(delay)
 
         coil_list = gen_coillist(max_coils=4)
         print(f"\nTurning off random coil(s) {coil_list}")
-        invoker.set_command(coils_off_cmd(plc1, coil_list))    
+        invoker.set_command(Coils_off_cmd(plc1, coil_list))    
         invoker.invoke()
   
         print(f"\nTest coil status")        
-        invoker.set_command(validate_cmd(plc1))
+        invoker.set_command(Validate_cmd(plc1))
         invoker.invoke()        
+
         time.sleep(2)        
 
 if __name__ == "__main__":

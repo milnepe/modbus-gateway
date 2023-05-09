@@ -36,9 +36,9 @@ class Plcs:
                 self.instrument.write_bits(0, _coil_states)
                 logging.info(f"FC15 {self.instrument.address} {coils} {_coil_states}")
         except:
-            logging.critical(f"ERROR {sys.exc_info()[0]}: Plc{self.instrument.address} {coils} {_coil_states}")
+            logging.error(f"ERROR {sys.exc_info()[0]}: Plc{self.instrument.address} {coils} {_coil_states}")
             #raise
-        else:
+        else: # Only update if write succeeds
             self.coil_states = _coil_states
 
     def _read_coil_states(self) -> list:

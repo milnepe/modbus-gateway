@@ -1,10 +1,10 @@
-from gateway.plcs import Plcs
+from plcs import Plcs
 
 class Command:
     def execute(self):
         pass
 
-class coils_on_cmd(Command):
+class Coils_on_cmd(Command):
     def __init__(self, plc: Plcs, coil_list: list):
         self.plc = plc
         self.coil_list = coil_list
@@ -12,7 +12,7 @@ class coils_on_cmd(Command):
     def execute(self) -> None:
         self.plc.coils_on(self.coil_list)
 
-class coils_off_cmd(Command):
+class Coils_off_cmd(Command):
     def __init__(self, plc: Plcs, coil_list: list):
         self.plc = plc
         self.coil_list = coil_list        
@@ -20,7 +20,7 @@ class coils_off_cmd(Command):
     def execute(self) -> None:
         self.plc.coils_off(self.coil_list)
 
-class validate_cmd(Command):
+class Validate_cmd(Command):
     def __init__(self, plc: Plcs):
         self.plc = plc
 
