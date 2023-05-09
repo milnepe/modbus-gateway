@@ -26,11 +26,11 @@ def main() -> None:
         print(f"\nTurning on random coil(s) {coil_list}")
         invoker.set_command(coils_on_cmd(plc1, coil_list))    
         invoker.invoke()
-        time.sleep(2)
 
         print(f"\nTest coil status")        
         invoker.set_command(validate_cmd(plc1))
-        invoker.invoke()        
+        invoker.invoke()
+        time.sleep(2)
 
         coil_list = gen_coillist(max_coils=4)
         print(f"\nTurning off random coil(s) {coil_list}")
