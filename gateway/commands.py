@@ -32,4 +32,4 @@ class validate_cmd(Command):
         self.plc = plc
 
     def execute(self) -> None:
-        self.plc.validate()
+        self.plc.validate_coils()

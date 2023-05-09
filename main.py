@@ -14,7 +14,7 @@ def main() -> None:
     instrument1 = minimalmodbus.Instrument('/dev/ttymxc3', 1)       
     instrument1.serial.baudrate = 9600
     
-    plc1 = Plcs(instrument1)
+    plc1 = Plcs(instrument1, num_coils=4)
     print(f"Connected to Plc {instrument1.address} \
         on port: {instrument1.serial.port}")
 
