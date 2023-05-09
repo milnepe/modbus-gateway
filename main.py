@@ -1,14 +1,15 @@
 import minimalmodbus
 from gateway.invoker import Invoker
 from gateway.plcs import Plcs
-from gateway.randomcoil import *
 from gateway.commands import *
+from gateway.randomcoil import *
 import time
 import logging
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 def main() -> None:
+
     # port name, server address (in decimal)                                        
     instrument1 = minimalmodbus.Instrument('/dev/ttymxc3', 1)       
     instrument1.serial.baudrate = 9600
