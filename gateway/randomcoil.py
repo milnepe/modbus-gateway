@@ -10,4 +10,4 @@ def gen_coillist(max_coils: int) -> list:
         randomlist.append(n)
     return randomlist
 
-print(gen_coillist(max_coils=4))
+#print(gen_coillist(max_coils=4))
