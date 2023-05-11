@@ -2,15 +2,20 @@
 # -*- coding: utf-8 -*-
 
 """
-Send test messages over MQTT with json payload to control plc coils:
+MQTT client controlling plc coils via MODBUS RTU
+Plc and command are mapped from topic
+Json payload defines coil address to operate on
+
+For the RS Pro Logic Module (PN 917-6370) there are 4 coils [0,1,2,3]
+To turn on contacts Q2 & Q3 publish the following:
 mosquitto_pub -t 'test/plc/coils_on' -m '{"coils":[1,2]}'
 """
 
 import paho.mqtt.client as mqtt
 import minimalmodbus
-from invoker import Invoker
-from plcs import Plcs
-from commands import Coils_on_cmd, Coils_off_cmd
+from gateway.invoker import Invoker
+from gateway.plcs import Plcs
+from gateway.commands import Coils_on_cmd, Coils_off_cmd
 import logging
 import json
 

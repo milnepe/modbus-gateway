@@ -1,7 +1,10 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import minimalmodbus
-from invoker import Invoker
-from plcs import Plcs
-from commands import Coils_on_cmd, Coils_off_cmd, Validate_cmd 
+from gateway.invoker import Invoker
+from gateway.plcs import Plcs
+from gateway.commands import Coils_on_cmd, Coils_off_cmd, Validate_cmd 
 from randomcoil import gen_coillist
 import time
 import logging
