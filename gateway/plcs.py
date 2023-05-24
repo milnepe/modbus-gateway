@@ -29,7 +29,7 @@ class Plcs:
         try:
             if len(coils) == 1:
                     # Modbus Function Code 05: Force Single Coil (FC=05)
-                    self.instrument.write_bit(coils[0], _coil_states[coils[0]])
+                    self.instrument.write_bit(coils[0], _coil_states[coils[0]], functioncode=5)
                     logging.info(f"FC05 {self.instrument.address} {coils} {_coil_states}")
             else:
                 # Modbus Function Code 0F: Force Multiple Coils (FC=15)            
