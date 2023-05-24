@@ -1,5 +1,5 @@
 from queue import Queue
-from commands import Command
+from gateway.commands import Command
 
 class Invoker:
     def __init__(self):

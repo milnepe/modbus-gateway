@@ -1,4 +1,4 @@
-from plcs import Plcs
+from gateway.plcs import Plcs
 
 class Command:
     def execute(self):
