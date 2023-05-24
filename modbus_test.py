@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import minimalmodbus
 from gateway.invoker import Invoker
 from gateway.plcs import Plcs
