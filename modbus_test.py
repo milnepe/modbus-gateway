@@ -6,7 +6,7 @@ from randomcoil import gen_coillist
 import time
 import logging
 
-delay = 0.1
+DELAY = 2 # Seconds
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -32,7 +32,7 @@ def main() -> None:
         print(f"\nTest coil status")        
         invoker.set_command(Validate_cmd(plc1))
         invoker.invoke()
-        time.sleep(delay)
+        time.sleep(DELAY)
 
         coil_list = gen_coillist(max_coils=4)
         print(f"\nTurning off random coil(s) {coil_list}")
@@ -43,7 +43,7 @@ def main() -> None:
         invoker.set_command(Validate_cmd(plc1))
         invoker.invoke()        
 
-        time.sleep(2)        
+        time.sleep(DELAY)        
 
 if __name__ == "__main__":
         main()
