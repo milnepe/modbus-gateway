@@ -24,6 +24,11 @@ def main() -> None:
 
     invoker = Invoker()
 
+    print(f"\nTurning off all coils [0, 0, 0, 0]")
+    invoker.set_command(Coils_off_cmd(plc1, [0, 0, 0, 0]))    
+    invoker.invoke()
+    time.sleep(DELAY)
+
     run = True
     while run:
         coil_list = gen_coillist(max_coils=4)
