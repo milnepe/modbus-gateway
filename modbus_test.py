@@ -6,6 +6,8 @@ from randomcoil import gen_coillist
 import time
 import logging
 
+PORT = '/dev/ttymxc3'
+PLC_ID = 1
 DELAY = 2 # Seconds
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -13,7 +15,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 def main() -> None:
 
     # port name, server address (in decimal)                                        
-    instrument1 = minimalmodbus.Instrument('/dev/ttymxc3', 1)       
+    instrument1 = minimalmodbus.Instrument(PORT, PLC_ID)       
     instrument1.serial.baudrate = 9600
     
     plc1 = Plcs(instrument1, num_coils=4)
