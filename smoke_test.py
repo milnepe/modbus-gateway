@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import minimalmodbus as mm
 from time import sleep
+import minimalmodbus as mm
 
 ON = 1
 OFF = 0
