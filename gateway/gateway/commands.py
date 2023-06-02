@@ -39,3 +39,10 @@ class TimerSetCmd(Command):
 
     def execute(self) -> None:
         self.plc.timer_set(self.start_address, self.values)
+
+class ResetTimersCmd(Command):
+    def __init__(self, plc: Plcs):
+        self.plc = plc
+
+    def execute(self) -> None:
+        self.plc.reset_timers()

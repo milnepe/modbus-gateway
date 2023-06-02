@@ -12,6 +12,8 @@ class Plcs:
         self.instrument = instrument
         self.num_coils = num_coils
         self.coil_states = [OFF] * self.num_coils  # Remembers state of all coils
+        self.previous_timers = {}
+        self._timers_save()
 
     def coils_on(self, coils: list) -> None:
         """Turn on the coils in the list"""
@@ -30,6 +32,17 @@ class Plcs:
             Timer mode
         """
         self._write_registers(start_address, values)
+
+    def _timers_save(self) -> None:
+        """Save timers T1, T2, T3, T4 holding registers"""
+        number_of_registers = 4
+        _timers = self.previous_timers.copy()  # copy previous timers
+        try:
+            for start_address in (0, 4, 8, 12):
+                self.previous_timers[start_address] = self.instrument.read_registers(start_address, number_of_registers, functioncode=3)
+        except IOError:
+            self.previous_timers = _timers  # Reset values
+            logging.error('ERROR %s: Plc%s %s %s', sys.exc_info()[0], self.instrument.address, start_address, number_of_registers)      
 
     def _write_coil_states(self, coils: list, state: int) -> None:
         """Write using the MODBUS function for the coil or coils"""
@@ -80,3 +93,8 @@ class Plcs:
             logging.error('ERROR %s: Plc%s %s %s', sys.exc_info()[0], self.instrument.address, start_address, values)
         #else:  # Only update if write succeeds
             #self.coil_states = _coil_states
+
+    def reset_timers(self):
+        """Reset timer values"""
+        for start_address, values in self.previous_timers.items():
+            self._write_registers(start_address, values)
