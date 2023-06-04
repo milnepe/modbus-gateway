@@ -12,9 +12,8 @@ class Plcs:
         self.instrument = instrument
         self.num_coils = num_coils
         self.coil_states = [OFF] * self.num_coils  # Remembers state of all coils
-        self.previous_timers = {}
-        self._timers_save()
-
+        self.timer_states = {}
+ 
     def coils_on(self, coils: list) -> None:
         """Turn on the coils in the list"""
         self._write_coil_states(coils, ON)
@@ -31,18 +30,18 @@ class Plcs:
             Timer resolution
             Timer mode
         """
-        self._write_registers(start_address, values)
+        self._timer_save(start_address)  # Save current values
+        self._write_registers(start_address, values)  # Write new values
 
-    def _timers_save(self) -> None:
-        """Save timers T1, T2, T3, T4 holding registers"""
+    def _timer_save(self, start_address) -> None:
+        """Save timers holding register"""
         number_of_registers = 4
-        _timers = self.previous_timers.copy()  # copy previous timers
         try:
-            for start_address in (0, 4, 8, 12):
-                self.previous_timers[start_address] = self.instrument.read_registers(start_address, number_of_registers, functioncode=3)
-        except IOError:
-            self.previous_timers = _timers  # Reset values
-            logging.error('ERROR %s: Plc%s %s %s', sys.exc_info()[0], self.instrument.address, start_address, number_of_registers)      
+            timer = {start_address: self.instrument.read_registers(start_address, number_of_registers, functioncode=3)}            
+        except Exception:
+            logging.error('ERROR %s: Plc%s %s %s', sys.exc_info()[0], self.instrument.address, start_address, number_of_registers)
+        else:
+            self.timer_states.update(timer)  # Stash timer values
 
     def _write_coil_states(self, coils: list, state: int) -> None:
         """Write using the MODBUS function for the coil or coils"""
@@ -96,5 +95,5 @@ class Plcs:
 
     def reset_timers(self):
         """Reset timer values"""
-        for start_address, values in self.previous_timers.items():
+        for start_address, values in self.timer_states.items():
             self._write_registers(start_address, values)
