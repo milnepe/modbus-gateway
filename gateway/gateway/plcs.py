@@ -22,6 +22,14 @@ class Plcs:
         """Turn off the coils in the list"""
         self._write_coils(coils, OFF)
 
+    def validate_coils(self):
+        """Validate coil states for testing"""
+        coil_states = self._coils_read()
+        if coil_states != self.coil_states:
+            logging.info('Plc %s coils invalid %s %s', self.instrument.address, coil_states, self.coil_states)
+        else:
+            logging.info('Plc %s coils valid %s %s', self.instrument.address, coil_states, self.coil_states)
+
     def timer_set(self, start_address: int, values: list) -> None:
         """Set timer holding registers
         Each timer has 4 registers:
@@ -32,6 +40,11 @@ class Plcs:
         """
         self._timer_save(start_address)  # Save current values
         self._write_registers(start_address, values)  # Write new values
+
+    def reset_timers(self):
+        """Reset timer values"""
+        for start_address, values in self.timer_states.items():
+            self._write_registers(start_address, values)
 
     def _timer_save(self, start_address) -> None:
         """Save timers holding register"""
@@ -73,14 +86,6 @@ class Plcs:
             logging.critical('ERROR %s: Plc%s', sys.exc_info()[0], self.instrument.address)
             return [-1] * self.num_coils
 
-    def validate_coils(self):
-        """Validate coil states for testing"""
-        coil_states = self._coils_read()
-        if coil_states != self.coil_states:
-            logging.info('Plc %s coils invalid %s %s', self.instrument.address, coil_states, self.coil_states)
-        else:
-            logging.info('Plc %s coils valid %s %s', self.instrument.address, coil_states, self.coil_states)
-
     def _write_registers(self, start_address: int, values: list) -> None:
         """Write holding registers using MODBUS function code 16
         The number of registers is defined by the size of the list"""
@@ -91,8 +96,3 @@ class Plcs:
             logging.error('ERROR %s: Plc%s %s %s', sys.exc_info()[0], self.instrument.address, start_address, values)
         #else:  # Only update if write succeeds
             #self.coil_states = _coil_states
-
-    def reset_timers(self):
-        """Reset timer values"""
-        for start_address, values in self.timer_states.items():
-            self._write_registers(start_address, values)

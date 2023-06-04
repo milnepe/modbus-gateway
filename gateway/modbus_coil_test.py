@@ -27,7 +27,7 @@ def main() -> None:
 
     invoker = Invoker()
 
-    print("\nTurning off all coils [0, 0, 0, 0]")
+    print("\nTurning off all coils [0, 1, 2, 3]")
     invoker.set_command(CoilsOffCmd(plc1, [0, 1, 2, 3]))
     invoker.invoke()
     time.sleep(DELAY)
