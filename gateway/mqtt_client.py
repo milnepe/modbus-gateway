@@ -10,13 +10,15 @@ For the RS Pro Logic Module (PN 917-6370) there are 4 coils [0,1,2,3]
 To turn on contacts Q2 & Q3 publish the following:
 $ num=1
 $ mosquitto_pub -t "test/plc$num/coils_on" -m '{"coils":[1,2]}'
+$ mosquitto_pub -t "test/plc$num/timer_set" -m '{"start_address": 0, "values":[20,0,0,10]}'
+$ mosquitto_pub -t "test/plc$num/timer_reset" -m ''
 """
 
 import paho.mqtt.client as mqtt
 import minimalmodbus
 from gateway.invoker import Invoker
 from gateway.plcs import Plcs
-from gateway.commands import CoilsOnCmd, CoilsOffCmd
+from gateway.commands import CoilsOnCmd, CoilsOffCmd, TimerSetCmd, ResetTimersCmd
 import logging
 import json
 
@@ -51,6 +53,19 @@ def plc_coils_off(mosq, obj, msg):
     invoker.invoke() 
     logging.info(f"Coils off: {msg.topic} {msg.payload.decode('utf-8')}")
 
+def plc_timer_set(mosq, obj, msg):
+    """Callback mapping topic_root/plc1/timer_set topic to TimerSetCmd"""
+    payload = json.loads(msg.payload)
+    invoker.set_command(TimerSetCmd(plc1, payload['start_address'], payload['values']))
+    invoker.invoke() 
+    logging.info(f"Timer set: {msg.topic} {msg.payload.decode('utf-8')}")
+
+def plc_timer_reset(mosq, obj, msg):
+    """Callback mapping topic_root/plc1/timer_reset topic to ResetTimersCmd"""
+    #payload = json.loads(msg.payload)
+    invoker.set_command(ResetTimersCmd(plc1))
+    invoker.invoke() 
+    logging.info(f"Timer reset: {msg.topic} {msg.payload.decode('utf-8')}")
 
 def on_message(mosq, obj, msg):
     """Callback mapping all other topic_root messages - no ops"""
@@ -64,6 +79,8 @@ def main() -> None:
     # Add specific message callbacks
     client.message_callback_add(topic_root + "/plc1/coils_on", plc_coils_on)
     client.message_callback_add(topic_root + "/plc1/coils_off", plc_coils_off)
+    client.message_callback_add(topic_root + "/plc1/timer_set", plc_timer_set)
+    client.message_callback_add(topic_root + "/plc1/timer_reset", plc_timer_reset)
     client.on_message = on_message
     client.connect(broker, 1883, 60)
     client.subscribe(topic_root + "/#", 0)
