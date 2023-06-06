@@ -1,13 +1,21 @@
 #!/usr/bin/env python3
 
 """
-MQTT client controlling plc coils via MODBUS RTU
-Plc and command are mapped from topic
-Json payload defines coil address to operate on
+Secure MQTT client for MODBUS RTU comms with RS Pro Logic Module (PN 917-6370)
 
-For the RS Pro Logic Module (PN 917-6370) there are 4 coils [0,1,2,3]
-To turn on contacts Q2 & Q3 publish the following:
+For the RS Pro Logic Module there are 4 coils Q1, Q2, Q3,& Q4
+these have decimal addreses 0, 1, 2, 3
+
+To turn on contacts Q2 & Q3 publish the following message to the broker - 
+the PLC must be in idle mode:
 $ mosquitto_pub -h rock-4se -t "test/plc1/coils_on" -m '{"coils":[1,2]}'
+
+The RS Pro Logic Module has serveral registers that can be read/written - see documentation
+in the Logic Module software for details.
+
+A sample LD program is provided in ld - Run this on the Pro Logic sending the following
+messages to modify the T1 timer registers and then reset them:
+
 $ mosquitto_pub -h rock-4se -t "test/plc1/timer_set" -m '{"start_address": 0, "values":[20,0,0,10]}'
 $ mosquitto_pub -h rock-4se -t "test/plc1/timer_reset" -m ''
 """
