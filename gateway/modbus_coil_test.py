@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Test client to read and write coils using Modbus Function Codes"""
 
 import time
 import logging
@@ -9,7 +10,7 @@ from gateway.commands import CoilsOnCmd, CoilsOffCmd, ValidateCmd
 from randomcoil import gen_coillist
 
 PORT = '/dev/ttymxc3'
-PLC_ID = 1
+ADDRESS = 1
 DELAY = 2  # Seconds
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -18,7 +19,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 def main() -> None:
 
     # port name, server address (in decimal)
-    instrument1 = minimalmodbus.Instrument(PORT, PLC_ID)
+    instrument1 = minimalmodbus.Instrument(PORT, ADDRESS)
     instrument1.serial.baudrate = 9600
 
     plc1 = Plcs(instrument1, num_coils=4)
@@ -37,8 +38,6 @@ def main() -> None:
         coil_list = gen_coillist(max_coils=4)
         print(f"\nTurning on random coil(s) {coil_list}")
         invoker.set_command(CoilsOnCmd(plc1, coil_list))
-        invoker.invoke()
-        time.sleep(0.1)
 
         print("\nTest coil status")
         invoker.set_command(ValidateCmd(plc1))
@@ -48,8 +47,6 @@ def main() -> None:
         coil_list = gen_coillist(max_coils=4)
         print(f"\nTurning off random coil(s) {coil_list}")
         invoker.set_command(CoilsOffCmd(plc1, coil_list))
-        invoker.invoke()
-        time.sleep(0.1)
 
         print("\nTest coil status")
         invoker.set_command(ValidateCmd(plc1))

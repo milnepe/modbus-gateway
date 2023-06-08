@@ -40,11 +40,11 @@ TOPIC_ROOT = "test"
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
-rtu_device = minimalmodbus.Instrument(PORT, ADDRESS)       
-rtu_device.serial.baudrate = BAUDRATE
+instrument1 = minimalmodbus.Instrument(PORT, ADDRESS)       
+instrument1.serial.baudrate = BAUDRATE
 
-plc1 = Plcs(rtu_device, num_coils=4)
-print(f"Connected to Plc: {rtu_device.address} port: {rtu_device.serial.port}")
+plc1 = Plcs(instrument1, num_coils=4)
+print(f"Connected to Plc: {instrument1.address} port: {instrument1.serial.port}")
 
 invoker = Invoker()
 

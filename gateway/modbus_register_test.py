@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Test client to read and write registers using Modbus Function Codes"""
 
 import time
 import logging
@@ -8,7 +9,7 @@ from gateway.plcs import Plcs
 from gateway.commands import TimerSetCmd, ResetTimersCmd
 
 PORT = '/dev/ttymxc3'
-PLC_ID = 1
+ADDRESS = 1
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -16,7 +17,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 def main() -> None:
 
     # port name, server address (in decimal)
-    instrument1 = minimalmodbus.Instrument(PORT, PLC_ID)
+    instrument1 = minimalmodbus.Instrument(PORT, ADDRESS)
     instrument1.serial.baudrate = 9600
 
     plc1 = Plcs(instrument1, num_coils=4)
