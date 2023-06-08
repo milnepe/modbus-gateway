@@ -1,17 +1,16 @@
 [Unit]
-Description=Modbus Container
-After=docker.service
-Requires=docker.service
+Description=Modbus Gateway
+After=network-online.target
+Wants=network-online.target
 
 [Service]
-TimeoutStartSec=0
+User=debix
+Group=debix
 Restart=always
-ExecStartPre=-/usr/bin/docker stop %n
-ExecStartPre=-/usr/bin/docker rm %n
-#ExecStartPre=/usr/bin/docker pull redis
-ExecStart=/usr/bin/docker run --rm --name %n \
-	--device=/dev/ttymxc3:/dev/ttymxc3 \
-	modbus:test
+WorkingDirectory=/home/debix/gateway
+ExecStart=/home/debix/gateway/mqtt_client.py
+TimeoutStartSec=0
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target
