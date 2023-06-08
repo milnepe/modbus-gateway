@@ -7,8 +7,8 @@ Wants=network-online.target
 User=debix
 Group=debix
 Restart=always
-WorkingDirectory=/home/debix/gateway
-ExecStart=/home/debix/gateway/mqtt_client.py
+WorkingDirectory=/home/debix/modbus-gateway/gateway
+ExecStart=/home/debix/modbus-gateway/gateway/mqtt_client.py
 TimeoutStartSec=0
 RemainAfterExit=yes
 
