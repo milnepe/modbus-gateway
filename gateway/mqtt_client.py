@@ -8,7 +8,7 @@ these have decimal addreses 0, 1, 2, 3
 
 To turn on contacts Q2 & Q3 publish the following message to the broker - 
 the PLC must be in idle mode:
-$ mosquitto_pub -h rock-4se -t "test/plc1/coils_on" -m '{"coils":[1,2]}'
+$ clientuitto_pub -h rock-4se -t "test/plc1/coils_on" -m '{"coils":[1,2]}'
 
 The RS Pro Logic Module has serveral registers that can be read/written - see documentation
 in the Logic Module software for details.
@@ -17,6 +17,9 @@ A sample LD program is provided in ld - Run this on the Pro Logic sending the fo
 messages to modify the T1 timer registers and then reset them:
 
 $ mosquitto_pub -h rock-4se -t "test/plc1/timer_set" -m '{"start_address": 0, "values":[20,0,0,10]}'
+$ mosquitto_pub -h rock-4se -t "test/plc1/timer_set" -m '{"start_address": 4, "values":[20,0,0,10]}'
+$ mosquitto_pub -h rock-4se -t "test/plc1/timer_set" -m '{"start_address": 8, "values":[20,0,0,10]}'
+$ mosquitto_pub -h rock-4se -t "test/plc1/timer_set" -m '{"start_address": 12, "values":[20,0,0,10]}'
 $ mosquitto_pub -h rock-4se -t "test/plc1/timer_reset" -m ''
 """
 
@@ -48,31 +51,38 @@ print(f"Connected to Plc: {instrument1.address} port: {instrument1.serial.port}"
 
 invoker = Invoker()
 
+def plc_factory(topic) -> Plcs:
+    """Return PLC in sub-topic"""
+    sub_topic = topic.split('/')
+    if sub_topic[1] == 'plc1':
+        return plc1
+    #elif sub_topic[1] == 'plc2':
+        #return plc2
+
 def plc_coils_on(mosq, obj, msg):
-    """Callback mapping TOPIC_ROOT/plc1/coils_on topic to CoilsOnCmd"""
+    """Callback mapping TOPIC_ROOT/plc{n}/coils_on topic to CoilsOnCmd"""
     payload = json.loads(msg.payload)
-    invoker.set_command(CoilsOnCmd(plc1, payload['coils']))
+    invoker.set_command(CoilsOnCmd(plc_factory(msg.topic), payload['coils']))
     invoker.invoke() 
     logging.info(f"Coils on: {msg.topic} {msg.payload.decode('utf-8')}")
 
-
 def plc_coils_off(mosq, obj, msg):
-    """Callback mapping TOPIC_ROOT/plc1/coils_off topic to CoilsOffCmd"""
+    """Callback mapping TOPIC_ROOT/plc{n}/coils_off topic to CoilsOffCmd"""
     payload = json.loads(msg.payload)
-    invoker.set_command(CoilsOffCmd(plc1, payload['coils']))
+    invoker.set_command(CoilsOffCmd(plc_factory(msg.topic), payload['coils']))
     invoker.invoke() 
     logging.info(f"Coils off: {msg.topic} {msg.payload.decode('utf-8')}")
 
 def plc_timer_set(mosq, obj, msg):
-    """Callback mapping TOPIC_ROOT/plc1/timer_set topic to TimerSetCmd"""
+    """Callback mapping TOPIC_ROOT/plc{n}/timer_set topic to TimerSetCmd"""
     payload = json.loads(msg.payload)
-    invoker.set_command(TimerSetCmd(plc1, payload['start_address'], payload['values']))
+    invoker.set_command(TimerSetCmd(plc_factory(msg.topic), payload['start_address'], payload['values']))
     invoker.invoke() 
     logging.info(f"Timer set: {msg.topic} {msg.payload.decode('utf-8')}")
 
 def plc_timer_reset(mosq, obj, msg):
-    """Callback mapping TOPIC_ROOT/plc1/timer_reset topic to ResetTimersCmd"""
-    invoker.set_command(ResetTimersCmd(plc1))
+    """Callback mapping TOPIC_ROOT/plc{n}/timer_reset topic to ResetTimersCmd"""
+    invoker.set_command(ResetTimersCmd(plc_factory(msg.topic)))
     invoker.invoke() 
     logging.info(f"Timer reset: {msg.topic} {msg.payload.decode('utf-8')}")
 
@@ -83,23 +93,23 @@ def on_message(mosq, obj, msg):
 
 def main() -> None:
 
-    client = mqtt.Client(CLIENT_ID)
-    client.tls_set(
+    mqttc = mqtt.Client(CLIENT_ID)
+    mqttc.tls_set(
         ca_certs=ROOT_CERT,
         certfile=CLIENT_CERT,
         keyfile=CLIENT_KEY
     )
 
-    # Add specific message callbacks
-    client.message_callback_add(TOPIC_ROOT + "/plc1/coils_on", plc_coils_on)
-    client.message_callback_add(TOPIC_ROOT + "/plc1/coils_off", plc_coils_off)
-    client.message_callback_add(TOPIC_ROOT + "/plc1/timer_set", plc_timer_set)
-    client.message_callback_add(TOPIC_ROOT + "/plc1/timer_reset", plc_timer_reset)
-    client.on_message = on_message
-    client.connect(BROKER, 8883, 60)
-    client.subscribe(TOPIC_ROOT + "/#", 0)
+    # Add specific message callbacks eg test/plc1/coils_on
+    mqttc.message_callback_add(TOPIC_ROOT + "/+/coils_on", plc_coils_on)
+    mqttc.message_callback_add(TOPIC_ROOT + "/+/coils_off", plc_coils_off)
+    mqttc.message_callback_add(TOPIC_ROOT + "/+/timer_set", plc_timer_set)
+    mqttc.message_callback_add(TOPIC_ROOT + "/+/timer_reset", plc_timer_reset)
+    mqttc.on_message = on_message
+    mqttc.connect(BROKER, 8883, 60)
+    mqttc.subscribe(TOPIC_ROOT + "/#", 0)
 
-    client.loop_forever()    
+    mqttc.loop_forever()    
 
 if __name__ == "__main__":
         main()
