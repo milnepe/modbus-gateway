@@ -64,28 +64,28 @@ def plc_coils_on(mosq, obj, msg):
     """Callback mapping TOPIC_ROOT/plc{n}/coils_on topic to CoilsOnCmd"""
     payload = json.loads(msg.payload)
     invoker.set_command(CoilsOnCmd(plc_factory(msg.topic), payload['coils']))
-    logging.info(f"Coils on: {msg.topic} {msg.payload.decode('utf-8')}")
+    logging.info("Coils on: %s, %s", msg.topic, msg.payload.decode('utf-8'))
 
 def plc_coils_off(mosq, obj, msg):
     """Callback mapping TOPIC_ROOT/plc{n}/coils_off topic to CoilsOffCmd"""
     payload = json.loads(msg.payload)
     invoker.set_command(CoilsOffCmd(plc_factory(msg.topic), payload['coils']))
-    logging.info(f"Coils off: {msg.topic} {msg.payload.decode('utf-8')}")
+    logging.info("Coils off: %s, %s", msg.topic, msg.payload.decode('utf-8'))
 
 def plc_timer_set(mosq, obj, msg):
     """Callback mapping TOPIC_ROOT/plc{n}/timer_set topic to TimerSetCmd"""
     payload = json.loads(msg.payload)
     invoker.set_command(TimerSetCmd(plc_factory(msg.topic), payload['start_address'], payload['values']))
-    logging.info(f"Timer set: {msg.topic} {msg.payload.decode('utf-8')}")
+    logging.info("Timer set: %s, %s", msg.topic, msg.payload.decode('utf-8'))
 
 def plc_timer_reset(mosq, obj, msg):
     """Callback mapping TOPIC_ROOT/plc{n}/timer_reset topic to ResetTimersCmd"""
     invoker.set_command(ResetTimersCmd(plc_factory(msg.topic)))
-    logging.info(f"Timer reset: {msg.topic} {msg.payload.decode('utf-8')}")
+    logging.info("Timer reset: %s, %s", msg.topic, msg.payload.decode('utf-8'))
 
 def on_message(mosq, obj, msg):
     """Callback mapping all other TOPIC_ROOT messages - no ops"""
-    logging.info(f"Unexpected message: {msg.topic} {msg.payload.decode('utf-8')}")
+    logging.info("Unexpected message: %s, %s", msg.topic, msg.payload.decode('utf-8'))
 
 
 def main() -> None:
@@ -113,4 +113,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-        main()
+    main()
