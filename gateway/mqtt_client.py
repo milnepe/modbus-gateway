@@ -58,32 +58,29 @@ def plc_factory(topic) -> Plcs:
         return plc1
     #elif sub_topic[1] == 'plc2':
         #return plc2
+    return None
 
 def plc_coils_on(mosq, obj, msg):
     """Callback mapping TOPIC_ROOT/plc{n}/coils_on topic to CoilsOnCmd"""
     payload = json.loads(msg.payload)
     invoker.set_command(CoilsOnCmd(plc_factory(msg.topic), payload['coils']))
-    invoker.invoke() 
     logging.info(f"Coils on: {msg.topic} {msg.payload.decode('utf-8')}")
 
 def plc_coils_off(mosq, obj, msg):
     """Callback mapping TOPIC_ROOT/plc{n}/coils_off topic to CoilsOffCmd"""
     payload = json.loads(msg.payload)
     invoker.set_command(CoilsOffCmd(plc_factory(msg.topic), payload['coils']))
-    invoker.invoke() 
     logging.info(f"Coils off: {msg.topic} {msg.payload.decode('utf-8')}")
 
 def plc_timer_set(mosq, obj, msg):
     """Callback mapping TOPIC_ROOT/plc{n}/timer_set topic to TimerSetCmd"""
     payload = json.loads(msg.payload)
     invoker.set_command(TimerSetCmd(plc_factory(msg.topic), payload['start_address'], payload['values']))
-    invoker.invoke() 
     logging.info(f"Timer set: {msg.topic} {msg.payload.decode('utf-8')}")
 
 def plc_timer_reset(mosq, obj, msg):
     """Callback mapping TOPIC_ROOT/plc{n}/timer_reset topic to ResetTimersCmd"""
     invoker.set_command(ResetTimersCmd(plc_factory(msg.topic)))
-    invoker.invoke() 
     logging.info(f"Timer reset: {msg.topic} {msg.payload.decode('utf-8')}")
 
 def on_message(mosq, obj, msg):
@@ -109,7 +106,11 @@ def main() -> None:
     mqttc.connect(BROKER, 8883, 60)
     mqttc.subscribe(TOPIC_ROOT + "/#", 0)
 
-    mqttc.loop_forever()    
+    mqttc.loop_start()
+
+    while True:
+        invoker.invoke()
+
 
 if __name__ == "__main__":
         main()
