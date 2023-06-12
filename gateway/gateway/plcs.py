@@ -13,7 +13,7 @@ class Plcs:
         self.num_coils = num_coils
         self.coil_states = [OFF] * self.num_coils  # Remembers state of all coils
         self.timer_states = {}
- 
+
     def coils_on(self, coils: list) -> None:
         """Turn on the coils in the list"""
         self._write_coils(coils, ON)
@@ -50,7 +50,7 @@ class Plcs:
         """Save timers holding register"""
         number_of_registers = 4
         try:
-            timer = {start_address: self.instrument.read_registers(start_address, number_of_registers, functioncode=3)}            
+            timer = {start_address: self.instrument.read_registers(start_address, number_of_registers, functioncode=3)}
         except Exception:
             logging.error('ERROR %s: Plc%s %s %s', sys.exc_info()[0], self.instrument.address, start_address, number_of_registers)
         else:
@@ -58,8 +58,7 @@ class Plcs:
 
     def _write_coils(self, coils: list, state: int) -> None:
         """Write using the MODBUS function for the coil or coils in list"""
-        coils.sort()
-        _coil_states = self._coils_read()  # Temp list of all current coil states
+        _coil_states = self._coils_read()  # Read current state of all coils
         for i in coils:
             _coil_states[i] = state  # Update each coil in coils list
         try:
@@ -79,7 +78,7 @@ class Plcs:
     def _coils_read(self) -> list:
         """Return state of all coils using MODBUS function code 01"""
         try:
-            _coil_states =  self.instrument.read_bits(0, self.num_coils, functioncode=1)
+            _coil_states = self.instrument.read_bits(0, self.num_coils, functioncode=1)
             logging.info('FC01 %s %s', self.instrument.address, _coil_states)
             return _coil_states
         except Exception:
@@ -94,5 +93,3 @@ class Plcs:
             logging.info('FC16 Plc:%s Address:%s Values:%s', self.instrument.address, start_address, values)
         except IOError:
             logging.error('ERROR %s: Plc%s %s %s', sys.exc_info()[0], self.instrument.address, start_address, values)
-        #else:  # Only update if write succeeds
-            #self.coil_states = _coil_states
