@@ -31,6 +31,7 @@ class ValidateCmd(Command):
     def execute(self) -> None:
         self.plc.validate_coils()
 
+
 class TimerSetCmd(Command):
     def __init__(self, plc: Plcs, start_address: int, values: list):
         self.plc = plc
@@ -39,6 +40,7 @@ class TimerSetCmd(Command):
 
     def execute(self) -> None:
         self.plc.timer_set(self.start_address, self.values)
+
 
 class ResetTimersCmd(Command):
     def __init__(self, plc: Plcs):

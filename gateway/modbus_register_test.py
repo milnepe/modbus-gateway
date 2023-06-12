@@ -27,10 +27,10 @@ def main() -> None:
     invoker = Invoker()
 
     print("\nSet timers T1, T2, T3, T4 in mode 10")
-    invoker.set_command(TimerSetCmd(plc1, 0, [10, 0, 0, 10])) # T1
-    invoker.set_command(TimerSetCmd(plc1, 4, [20, 0, 0, 10])) # T2
-    invoker.set_command(TimerSetCmd(plc1, 8, [10, 0, 0, 10])) # T3
-    invoker.set_command(TimerSetCmd(plc1, 12, [20, 0, 0, 10])) # T4
+    invoker.set_command(TimerSetCmd(plc1, 0, [10, 0, 0, 10]))  # T1
+    invoker.set_command(TimerSetCmd(plc1, 4, [20, 0, 0, 10]))  # T2
+    invoker.set_command(TimerSetCmd(plc1, 8, [10, 0, 0, 10]))  # T3
+    invoker.set_command(TimerSetCmd(plc1, 12, [20, 0, 0, 10]))  # T4
 
     invoker.invoke()
 
@@ -40,6 +40,7 @@ def main() -> None:
     invoker.set_command(ResetTimersCmd(plc1))
 
     invoker.invoke()
+
 
 if __name__ == "__main__":
     main()
