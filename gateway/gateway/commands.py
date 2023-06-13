@@ -3,7 +3,7 @@ from gateway.plcs import Plcs
 
 class Command:
     def execute(self):
-        pass
+        raise NotImplementedError
 
 
 class CoilsOnCmd(Command):
