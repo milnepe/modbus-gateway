@@ -47,45 +47,45 @@ instrument1 = minimalmodbus.Instrument(PORT, ADDRESS)
 instrument1.serial.baudrate = BAUDRATE
 
 plc1 = Plcs(instrument1, num_coils=4)
+plcs = {'plc1': plc1}  # Dict of plc instances
 print(f"Connected to Plc: {instrument1.address} port: {instrument1.serial.port}")
 
 invoker = Invoker()
 
 
-def plc_factory(topic) -> Plcs:
+def plc_lookup(topic: str) -> Plcs:
     """Return PLC in sub-topic"""
     sub_topic = topic.split('/')
-    if sub_topic[1] == 'plc1':
-        return plc1
-    # elif sub_topic[1] == 'plc2':
-        # return plc2
-    return None
+    try:
+        return plcs[sub_topic[1]]
+    except KeyError:
+        return None
 
 
 def plc_coils_on(mosq, obj, msg):
     """Callback mapping TOPIC_ROOT/plc{n}/coils_on topic to CoilsOnCmd"""
     payload = json.loads(msg.payload)
-    invoker.set_command(CoilsOnCmd(plc_factory(msg.topic), payload['coils']))
+    invoker.set_command(CoilsOnCmd(plc_lookup(msg.topic), payload['coils']))
     logging.info("Coils on: %s, %s", msg.topic, msg.payload.decode('utf-8'))
 
 
 def plc_coils_off(mosq, obj, msg):
     """Callback mapping TOPIC_ROOT/plc{n}/coils_off topic to CoilsOffCmd"""
     payload = json.loads(msg.payload)
-    invoker.set_command(CoilsOffCmd(plc_factory(msg.topic), payload['coils']))
+    invoker.set_command(CoilsOffCmd(plc_lookup(msg.topic), payload['coils']))
     logging.info("Coils off: %s, %s", msg.topic, msg.payload.decode('utf-8'))
 
 
 def plc_timer_set(mosq, obj, msg):
     """Callback mapping TOPIC_ROOT/plc{n}/timer_set topic to TimerSetCmd"""
     payload = json.loads(msg.payload)
-    invoker.set_command(TimerSetCmd(plc_factory(msg.topic), payload['start_address'], payload['values']))
+    invoker.set_command(TimerSetCmd(plc_lookup(msg.topic), payload['start_address'], payload['values']))
     logging.info("Timer set: %s, %s", msg.topic, msg.payload.decode('utf-8'))
 
 
 def plc_timer_reset(mosq, obj, msg):
     """Callback mapping TOPIC_ROOT/plc{n}/timer_reset topic to ResetTimersCmd"""
-    invoker.set_command(ResetTimersCmd(plc_factory(msg.topic)))
+    invoker.set_command(ResetTimersCmd(plc_lookup(msg.topic)))
     logging.info("Timer reset: %s, %s", msg.topic, msg.payload.decode('utf-8'))
 
 

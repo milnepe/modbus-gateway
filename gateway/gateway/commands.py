@@ -12,7 +12,8 @@ class CoilsOnCmd(Command):
         self.coil_list = coil_list
 
     def execute(self) -> None:
-        self.plc.coils_on(self.coil_list)
+        if self.plc is not None:
+            self.plc.coils_on(self.coil_list)
 
 
 class CoilsOffCmd(Command):
@@ -21,7 +22,8 @@ class CoilsOffCmd(Command):
         self.coil_list = coil_list
 
     def execute(self) -> None:
-        self.plc.coils_off(self.coil_list)
+        if self.plc is not None:
+            self.plc.coils_off(self.coil_list)
 
 
 class ValidateCmd(Command):
@@ -29,7 +31,8 @@ class ValidateCmd(Command):
         self.plc = plc
 
     def execute(self) -> None:
-        self.plc.validate_coils()
+        if self.plc is not None:
+            self.plc.validate_coils()
 
 
 class TimerSetCmd(Command):
@@ -39,7 +42,8 @@ class TimerSetCmd(Command):
         self.values = values
 
     def execute(self) -> None:
-        self.plc.timer_set(self.start_address, self.values)
+        if self.plc is not None:
+            self.plc.timer_set(self.start_address, self.values)
 
 
 class ResetTimersCmd(Command):
@@ -47,4 +51,5 @@ class ResetTimersCmd(Command):
         self.plc = plc
 
     def execute(self) -> None:
-        self.plc.reset_timers()
+        if self.plc is not None:
+            self.plc.reset_timers()
